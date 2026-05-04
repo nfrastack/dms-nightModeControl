@@ -1,0 +1,15 @@
+{
+    "id": "nightModeControl",
+    "name": "Night Mode Control",
+    "description": "Control night mode parameters from bar and Control Center.",
+    "version": "1.0.0",
+    "author": "nfrastack",
+    "icon": "nights_stay",
+    "component": "./NightModeControlWidget.qml",
+    "settings": "./NightModeControlSettings.qml",
+    "permissions": [
+        "settings_read",
+        "settings_write",
+        "process"
+    ]
+}
