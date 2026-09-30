@@ -1,4 +1,4 @@
-## 1.1.0dev
+## 1.1.0 2026-09-30 <code at nfrastack dot com>
 
   ### Changed
       - Set night day termperature via SessionData instead of creating extra process
