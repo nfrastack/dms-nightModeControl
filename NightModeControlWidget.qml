@@ -262,38 +262,12 @@ PluginComponent {
                     font.weight: Font.Medium
                     color: Theme.surfaceText
                 }
-                 Flow {
+                DankFilterChips {
                     width: parent.width
-                    spacing: 4
-                    Repeater {
-                        model: root.presetTempsK
-                        delegate: Rectangle {
-                            required property var modelData
-                            readonly property int kelvin: parseInt(modelData)
-                            readonly property bool isCurrent: kelvin === root.targetNightK
-                            implicitWidth: presetLabel.implicitWidth + 16
-                            width: implicitWidth
-                            height: 28
-                            radius: Theme.cornerRadius
-                            color: isCurrent ? Theme.primary : "transparent"
-                            border.width: 1
-                            border.color: isCurrent ? Theme.primary : Theme.outlineMedium
-                            StyledText {
-                                id: presetLabel
-                                anchors.centerIn: parent
-                                text: parent.kelvin + "K"
-                                color: parent.isCurrent ? Theme.onPrimary : Theme.surfaceText
-                                font.pixelSize: Theme.fontSizeSmall
-                                font.weight: parent.isCurrent ? Font.Medium : Font.Normal
-                            }
-                            MouseArea {
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: root.setTargetTemp(parent.kelvin)
-                            }
-                        }
-                    }
+                    model: root.presetTempsK.map(k => parseInt(k) + "K")
+                    currentIndex: root.presetTempsK.map(k => parseInt(k)).indexOf(root.targetNightK)
+                    showCheck: false
+                    onSelectionChanged: index => root.setTargetTemp(root.presetTempsK[index])
                 }
             }
 
@@ -318,37 +292,15 @@ PluginComponent {
                         onClicked: root.setAutoEnabled(!root.autoEnabled)
                     }
                 }
-                Flow {
+                DankButtonGroup {
                     width: parent.width
-                    spacing: 4
                     visible: root.autoEnabled
-                    Repeater {
-                        model: ["time", "location"]
-                        delegate: Rectangle {
-                            required property var modelData
-                            readonly property bool isCurrent: modelData === root.autoMode
-                            implicitWidth: modeLabel.implicitWidth + 16
-                            width: implicitWidth
-                            height: 28
-                            radius: Theme.cornerRadius
-                            color: isCurrent ? Theme.primary : "transparent"
-                            border.width: 1
-                            border.color: isCurrent ? Theme.primary : Theme.outlineMedium
-                            StyledText {
-                                id: modeLabel
-                                anchors.centerIn: parent
-                                text: parent.modelData
-                                color: parent.isCurrent ? Theme.onPrimary : Theme.surfaceText
-                                font.pixelSize: Theme.fontSizeSmall
-                                font.weight: parent.isCurrent ? Font.Medium : Font.Normal
-                            }
-                            MouseArea {
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: root.setAutoMode(parent.modelData)
-                            }
-                        }
+                    model: ["time", "location"]
+                    currentIndex: root.autoMode === "location" ? 1 : 0
+                    checkEnabled: false
+                    onSelectionChanged: (index, selected) => {
+                        if (!selected) return;
+                        root.setAutoMode(index === 1 ? "location" : "time");
                     }
                 }
                 StyledText {

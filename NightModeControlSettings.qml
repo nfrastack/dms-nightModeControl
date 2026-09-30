@@ -109,6 +109,7 @@ PluginSettings {
 
     // Pill format (segmented selector — exactly one active)
     Column {
+        id: pillFormatCol
         width: parent.width
         spacing: Theme.spacingXS
         readonly property string current: pluginData.pillFormat ?? "tempOnly"
@@ -125,36 +126,14 @@ PluginSettings {
             wrapMode: Text.WordWrap
             width: parent.width
         }
-        Flow {
+        DankButtonGroup {
             width: parent.width
-            spacing: 4
-            Repeater {
-                model: parent.parent.formats
-                delegate: Rectangle {
-                    required property var modelData
-                    readonly property bool isCurrent: modelData.id === parent.parent.parent.current
-                    implicitWidth: pfLabel.implicitWidth + 16
-                    width: implicitWidth
-                    height: 28
-                    radius: Theme.cornerRadius
-                    color: isCurrent ? Theme.primary : "transparent"
-                    border.width: 1
-                    border.color: isCurrent ? Theme.primary : Theme.outlineMedium
-                    StyledText {
-                        id: pfLabel
-                        anchors.centerIn: parent
-                        text: parent.modelData.label
-                        color: parent.isCurrent ? Theme.onPrimary : Theme.surfaceText
-                        font.pixelSize: Appearance.fontSize.small
-                        font.weight: parent.isCurrent ? Font.Medium : Font.Normal
-                    }
-                    MouseArea {
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: root.saveValue("pillFormat", parent.modelData.id)
-                    }
-                }
+            model: pillFormatCol.formats.map(f => f.label)
+            currentIndex: Math.max(0, pillFormatCol.formats.findIndex(f => f.id === pillFormatCol.current))
+            checkEnabled: false
+            onSelectionChanged: (index, selected) => {
+                if (!selected) return;
+                root.saveValue("pillFormat", pillFormatCol.formats[index].id);
             }
         }
     }
@@ -207,15 +186,15 @@ PluginSettings {
 
         Flow {
             width: parent.width
-            spacing: 4
+            spacing: Theme.spacingXS
             Repeater {
                 model: root._presets()
                 delegate: Rectangle {
                     required property var modelData
                     readonly property int kelvin: parseInt(modelData)
-                    implicitWidth: chipRow.implicitWidth + 12
+                    implicitWidth: chipRow.implicitWidth + Theme.spacingM
                     width: implicitWidth
-                    height: 28
+                    height: Theme.buttonHeightXXS
                     radius: Theme.cornerRadius
                     color: "transparent"
                     border.width: 1
@@ -223,7 +202,7 @@ PluginSettings {
                     Row {
                         id: chipRow
                         anchors.centerIn: parent
-                        spacing: 4
+                        spacing: Theme.spacingXS
                         StyledText {
                             text: parent.parent.kelvin + "K"
                             color: Theme.surfaceText
