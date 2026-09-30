@@ -1,5 +1,4 @@
 import QtQuick
-import Quickshell
 import Quickshell.Io
 import qs.Common
 import qs.Services
@@ -47,18 +46,19 @@ PluginComponent {
     function bumpTargetTemp(delta) {
         const next = _clampK(targetNightK + delta);
         if (next === targetNightK) return;
-        if (debugLog) console.info("nightModeControl: bumpTargetTemp " + targetNightK + " -> " + next);
-        Quickshell.execDetached(["dms", "ipc", "call", "night", "setTargetTemp", String(next)]);
+        setTargetTemp(next);
     }
     function setTargetTemp(k) {
         const next = _clampK(k);
         if (debugLog) console.info("nightModeControl: setTargetTemp " + next);
-        Quickshell.execDetached(["dms", "ipc", "call", "night", "setTargetTemp", String(next)]);
+        SessionData.setNightModeTemperature(next);
+        if (SessionData.nightModeHighTemperature < next)
+            SessionData.setNightModeHighTemperature(next);
     }
     function setDayTemp(k) {
-        const next = Math.max(2500, Math.min(6500, _round500(k)));
+        const next = Math.max(targetNightK, Math.min(6500, _round500(k)));
         if (debugLog) console.info("nightModeControl: setDayTemp " + next);
-        Quickshell.execDetached(["dms", "ipc", "call", "night", "setDayTemp", String(next)]);
+        SessionData.setNightModeHighTemperature(next);
     }
     function toggleNightMode() {
         if (debugLog) console.info("nightModeControl: toggle");
@@ -227,7 +227,6 @@ PluginComponent {
                     unit: "K"
                     leftIcon: "nights_stay"
                     onSliderValueChanged: v => root.setTargetTemp(v)
-                    onSliderDragFinished: v => root.setTargetTemp(v)
                 }
             }
 
@@ -244,13 +243,12 @@ PluginComponent {
                 }
                 DankSlider {
                     width: parent.width
-                    minimum: 2500
+                    minimum: root.targetNightK
                     maximum: 6500
                     value: root.targetDayK
                     unit: "K"
                     leftIcon: "wb_sunny"
                     onSliderValueChanged: v => root.setDayTemp(v)
-                    onSliderDragFinished: v => root.setDayTemp(v)
                 }
             }
 

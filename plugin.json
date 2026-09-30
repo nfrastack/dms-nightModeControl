@@ -9,7 +9,6 @@
     "settings": "./NightModeControlSettings.qml",
     "permissions": [
         "settings_read",
-        "settings_write",
-        "process"
+        "settings_write"
     ]
 }

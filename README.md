@@ -38,7 +38,7 @@ Night Mode Control is a DankMaterialShell (DMS) plugin that surfaces the gamma /
 
 ## Requirements
 
-- DankMaterialShell 1.5-beta or later (DMS API version ≥ 6 for the `wayland.gamma` capability)
+- DankMaterialShell 1.6 or later
 - A Wayland compositor with `wlr-gamma-control-unstable-v1` (Hyprland, niri, Sway, river)
 - DMS daemon reporting `gamma` in its capabilities (`DisplayService.gammaControlAvailable === true`)
 
@@ -80,7 +80,7 @@ The settings page exposes all keys above. Use `Reset to defaults` under the pres
 
 - Bar pill - shows current Kelvin while night mode is on, target Kelvin while it's off. Scroll up raises the target by `stepK` (cooler), scroll down lowers it (warmer). Right-click toggles night mode. Left-click opens the detail popout.
 - Control Center -> Night Mode - clicking the tile toggles night mode without expanding (matches built-in behaviour). The expander chevron opens the same detail panel as the popout.
-- Sliders / quick presets - write through `dms ipc call night setTargetTemp` / `setDayTemp`. DMS rounds to the nearest 500K and re-applies immediately if night mode is on.
+- Sliders / quick presets - write via `SessionData.setNightModeTemperature()` / `setNightModeHighTemperature()`. DMS rounds to the nearest 500K and re-applies immediately if night mode is on.
 - Automation - toggling on starts time-based or location-based scheduling depending on `nightModeAutoMode`. Time-of-day and lat/long config still live in DMS Settings -> Display -> Gamma.
 
 ## Permissions
@@ -89,7 +89,6 @@ The plugin requests:
 
 - `settings_read` — read step / range / pill format / preset list / hide-when-inactive / debugLog
 - `settings_write` — save edits from the settings page
-- `process` — invoke `dms ipc call night …` for target / day temperature changes
 
 All gamma state goes through the DMS daemon's existing `wayland.gamma.*` request handlers.
 
